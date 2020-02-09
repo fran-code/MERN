@@ -1,0 +1,50 @@
+const notesCtrl = {};
+
+import Note from '../../models/note';
+
+notesCtrl.getNotes = async (req, res) => {
+    const notes = await Note.find();
+    res.json(notes);
+};
+
+notesCtrl.createNote = async (req, res) => {
+    const { title, content, date, author } = req.body;
+    const newNote = new Note({
+        title,
+        content,
+        date,
+        author
+    });
+    await newNote.save();
+    res.json('New Note added');
+};
+
+notesCtrl.getNote = async (req, res) => {
+    const note = await Note.findById(req.params.id);
+    res.json(note);
+}
+
+notesCtrl.deleteNote = async (req, res) => {
+    await Note.findByIdAndDelete(req.params.id)
+    res.json('Note Deleted');
+}
+
+notesCtrl.updateNote = async (req, res) => {
+    console.log(req);
+    const { title, content, duration, date, author } = req.body;
+    await Note.findByIdAndUpdate(req.params.id, {
+        title,
+        content,
+        duration,
+        author
+    });
+    res.json('Note Updated');
+}
+
+notesCtrl.getNotesUser = async (req, res) => {
+    const author = req.params.id
+    const note = await Note.find({author});
+    res.json(note);
+}
+
+module.exports = notesCtrl;
